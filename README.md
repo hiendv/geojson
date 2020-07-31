@@ -27,7 +27,6 @@ GO111MODULE=on go get -u github.com/hiendv/geojson/cmd/geojson
 geojson subarea 61320
 ```
 ```
-
 2020-07-30T17:20:28.859+0700  INFO  fetching sub-areas   {"parent": 61320}
 2020-07-30T17:20:37.758+0700  INFO  writing  {"path": "geojson/61320.geojson"}
 2020-07-30T17:20:37.760+0700  INFO  sub-areas handled {"total": 62}
