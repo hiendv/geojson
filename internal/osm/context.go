@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/paulmach/osm"
-	"go.uber.org/zap"
 )
 
 type ctxKey string
@@ -71,7 +70,7 @@ func ctxRoot(ctx context.Context) *osm.Relation {
 }
 
 func ctxLog(ctx context.Context) Logger {
-	log, ok := ctx.Value(ctxKeyLog).(*zap.SugaredLogger)
+	log, ok := ctx.Value(ctxKeyLog).(Logger)
 	if !ok || log == nil {
 		return nil
 	}
