@@ -60,22 +60,14 @@ func ctxOutDir(ctx context.Context) string {
 	return out
 }
 
-func ctxRoot(ctx context.Context) *osm.Relation {
-	root, ok := ctx.Value(ctxKeyRoot).(*osm.Relation)
-	if !ok {
-		return nil
-	}
-
-	return root
+func ctxRoot(ctx context.Context) (*osm.Relation, bool) {
+	v, ok := ctx.Value(ctxKeyRoot).(*osm.Relation)
+	return v, ok
 }
 
-func ctxLog(ctx context.Context) Logger {
-	log, ok := ctx.Value(ctxKeyLog).(Logger)
-	if !ok || log == nil {
-		return nil
-	}
-
-	return log
+func ctxLog(ctx context.Context) (Logger, bool) {
+	v, ok := ctx.Value(ctxKeyLog).(Logger)
+	return v, ok
 }
 
 func ctxSetRoot(ctx context.Context, root *osm.Relation) context.Context {

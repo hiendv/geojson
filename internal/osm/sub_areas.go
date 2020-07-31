@@ -31,8 +31,8 @@ type SubArea struct {
 }
 
 func SubAreas(ctx context.Context, str string) error {
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return errors.New("invalid logger")
 	}
 
@@ -115,8 +115,8 @@ func handleMembers(ctx context.Context, wg *sync.WaitGroup, ids <-chan int64, re
 }
 
 func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []byte, error) {
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return nil, nil, errors.New("invalid logger")
 	}
 
@@ -192,8 +192,8 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 func pushMember(ctx context.Context, wg *sync.WaitGroup, ids chan<- int64, id int64) {
 	defer wg.Done()
 
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return
 	}
 
@@ -212,13 +212,13 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 	defer wg.Done()
 
 	shouldCombine := ctxShouldCombine(ctx)
-	root := ctxRoot(ctx)
-	if root == nil {
+	root, ok := ctxRoot(ctx)
+	if !ok || root == nil {
 		return
 	}
 
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return
 	}
 
@@ -263,8 +263,8 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 }
 
 func reportResult(ctx context.Context, result SubArea) {
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return
 	}
 
@@ -286,8 +286,8 @@ func reportResult(ctx context.Context, result SubArea) {
 }
 
 func writeFile(ctx context.Context, name string, data []byte) error {
-	log := ctxLog(ctx)
-	if log == nil {
+	log, ok := ctxLog(ctx)
+	if !ok || log == nil {
 		return errors.New("invalid logger")
 	}
 
