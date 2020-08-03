@@ -18,7 +18,10 @@ const ctxKeyLog ctxKey = "log"
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
 func NewContext(ctx context.Context, log Logger, raw bool, separated bool, out string) context.Context {
-	log.Debugw("context", "raw", raw, "separated", separated, "out", out)
+	if log != nil {
+		log.Debugw("context", "raw", raw, "separated", separated, "out", out)
+	}
+
 	return context.WithValue(
 		context.WithValue(
 			context.WithValue(
