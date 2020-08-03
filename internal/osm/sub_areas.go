@@ -3,7 +3,6 @@ package osm
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -31,11 +30,7 @@ type SubArea struct {
 }
 
 func SubAreas(ctx context.Context, str string) error {
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return errors.New("invalid logger")
-	}
-
+	log := ctxLog(ctx)
 	log.Debugw("constants", "channel_cap", CHANNEL_CAP, "worker_cap", WORKER_CAP)
 
 	id, err := util.Int64FromString(str)
@@ -115,11 +110,7 @@ func handleMembers(ctx context.Context, wg *sync.WaitGroup, ids <-chan int64, re
 }
 
 func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []byte, error) {
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return nil, nil, errors.New("invalid logger")
-	}
-
+	log := ctxLog(ctx)
 	defer func() {
 		log.Debugw("sub-area handled", "id", id)
 	}()
@@ -192,11 +183,7 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 func pushMember(ctx context.Context, wg *sync.WaitGroup, ids chan<- int64, id int64) {
 	defer wg.Done()
 
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return
-	}
-
+	log := ctxLog(ctx)
 	for {
 		if enqueueID(id, ids) {
 			log.Debugw("sub-area enqueued", "id", id)
@@ -217,11 +204,7 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 		return
 	}
 
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return
-	}
-
+	log := ctxLog(ctx)
 	featureCollection := geojson.FeatureCollection{
 		Type:     "FeatureCollection",
 		BBox:     geojson.BBox{},
@@ -263,11 +246,7 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 }
 
 func reportResult(ctx context.Context, result SubArea) {
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return
-	}
-
+	log := ctxLog(ctx)
 	if result.err != nil {
 		log.Error(result.err)
 		return
@@ -286,11 +265,7 @@ func reportResult(ctx context.Context, result SubArea) {
 }
 
 func writeFile(ctx context.Context, name string, data []byte) error {
-	log, ok := ctxLog(ctx)
-	if !ok || log == nil {
-		return errors.New("invalid logger")
-	}
-
+	log := ctxLog(ctx)
 	path := filepath.Join(ctxOutDir(ctx), filepath.Base(name))
 	log.Infow("writing", "path", path)
 	return ioutil.WriteFile(path, data, 0644)
