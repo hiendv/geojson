@@ -8,9 +8,8 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-var normalizer = transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
-
 func NormalizeString(str string) string {
+	normalizer := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	input := []byte(str)
 	b := make([]byte, len(input))
 	n, _, _ := normalizer.Transform(b, input, true)
