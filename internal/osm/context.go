@@ -3,6 +3,7 @@ package osm
 import (
 	"context"
 
+	"github.com/hiendv/geojson/internal/shared"
 	"github.com/paulmach/osm"
 )
 
@@ -73,7 +74,7 @@ func ctxRoot(ctx context.Context) (*osm.Relation, bool) {
 func ctxLog(ctx context.Context) Logger {
 	v, ok := ctx.Value(ctxKeyLog).(Logger)
 	if !ok {
-		return LoggerNoop
+		return shared.LoggerNoop
 	}
 
 	return v
