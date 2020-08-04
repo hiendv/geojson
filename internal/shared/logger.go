@@ -1,5 +1,13 @@
 package shared
 
+type Logger interface {
+	Infow(string, ...interface{})
+	Debugw(string, ...interface{})
+	Warnw(string, ...interface{})
+	Error(...interface{})
+	Errorw(string, ...interface{})
+}
+
 type loggerNoop struct{}
 
 func (logger *loggerNoop) Infow(string, ...interface{})  {}

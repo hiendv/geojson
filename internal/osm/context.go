@@ -18,7 +18,7 @@ const ctxKeyRoot ctxKey = "root"
 const ctxKeyLog ctxKey = "log"
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
-func NewContext(ctx context.Context, log Logger, raw bool, separated bool, out string) context.Context {
+func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) context.Context {
 	if log != nil {
 		log.Debugw("context", "raw", raw, "separated", separated, "out", out)
 	}
@@ -71,8 +71,8 @@ func ctxRoot(ctx context.Context) (*osm.Relation, bool) {
 	return v, ok
 }
 
-func ctxLog(ctx context.Context) Logger {
-	v, ok := ctx.Value(ctxKeyLog).(Logger)
+func ctxLog(ctx context.Context) shared.Logger {
+	v, ok := ctx.Value(ctxKeyLog).(shared.Logger)
 	if !ok {
 		return shared.LoggerNoop
 	}
