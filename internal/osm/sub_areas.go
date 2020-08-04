@@ -17,9 +17,11 @@ import (
 	"github.com/paulmach/osm/osmgeojson"
 )
 
-const ROLE_SUBAREA = "subarea"
-const CHANNEL_CAP = 1000
-const WORKER_CAP = 10
+const (
+	ROLE_SUBAREA = "subarea"
+	CHANNEL_CAP  = 1000
+	WORKER_CAP   = 10
+)
 
 var TAGS = []string{"name", "type"}
 

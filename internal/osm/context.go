@@ -9,11 +9,13 @@ import (
 
 type ctxKey string
 
-const ctxKeyRaw ctxKey = "raw"
-const ctxKeySeparated ctxKey = "separated"
-const ctxKeyOut ctxKey = "out"
-const ctxKeyRoot ctxKey = "root"
-const ctxKeyLog ctxKey = "log"
+const (
+	ctxKeyRaw       ctxKey = "raw"
+	ctxKeySeparated ctxKey = "separated"
+	ctxKeyOut       ctxKey = "out"
+	ctxKeyRoot      ctxKey = "root"
+	ctxKeyLog       ctxKey = "log"
+)
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
 func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) context.Context {
