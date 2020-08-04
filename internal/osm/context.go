@@ -19,27 +19,22 @@ const ctxKeyLog ctxKey = "log"
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
 func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) context.Context {
-	if log != nil {
-		log.Debugw("context", "raw", raw, "separated", separated, "out", out)
+	ctxx := map[ctxKey]interface{}{
+		ctxKeyLog:       log,
+		ctxKeyRaw:       raw,
+		ctxKeySeparated: separated,
+		ctxKeyOut:       out,
 	}
 
-	return context.WithValue(
-		context.WithValue(
-			context.WithValue(
-				context.WithValue(
-					ctx,
-					ctxKeyOut,
-					out,
-				),
-				ctxKeySeparated,
-				separated,
-			),
-			ctxKeyRaw,
-			raw,
-		),
-		ctxKeyLog,
-		log,
-	)
+	if log != nil {
+		log.Debugw("context", "values", ctxx)
+	}
+
+	for k, v := range ctxx {
+		ctx = context.WithValue(ctx, k, v)
+	}
+
+	return ctx
 }
 
 func ctxShouldNormalize(ctx context.Context) bool {

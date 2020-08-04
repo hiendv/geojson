@@ -239,7 +239,7 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 		return
 	}
 
-	err = writeFile(ctx, fmt.Sprintf("%d.geojson", root.ID), featureCollectionJSON)
+	err = writeFile(ctx, int64(root.ID), featureCollectionJSON)
 	if err != nil {
 		log.Error(err)
 	}
@@ -258,17 +258,22 @@ func reportResult(ctx context.Context, result SubArea) {
 		return
 	}
 
-	err := writeFile(ctx, fmt.Sprintf("%d.geojson", result.id), result.json)
+	err := writeFile(ctx, result.id, result.json)
 	if err != nil {
 		log.Error(err)
 	}
 }
 
-func writeFile(ctx context.Context, name string, data []byte) error {
+func writeFile(ctx context.Context, id int64, data []byte) error {
 	log := ctxLog(ctx)
-	path := filepath.Join(ctxOutDir(ctx), filepath.Base(name))
+	path := filePath(ctx, id)
 	log.Infow("writing", "path", path)
 	return ioutil.WriteFile(path, data, 0644)
+}
+
+func filePath(ctx context.Context, id int64) string {
+	name := fmt.Sprintf("%d.geojson", id)
+	return filepath.Join(ctxOutDir(ctx), filepath.Base(name))
 }
 
 func enqueueID(id int64, ids chan<- int64) bool {

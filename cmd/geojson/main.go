@@ -67,12 +67,6 @@ func main() {
 					Aliases: []string{"s"},
 					Usage:   "leave sub-areas unmerged",
 				},
-				&cli.StringFlag{
-					Name:    "out",
-					Aliases: []string{"o"},
-					Usage:   "specify a directory to save output instead of stdout",
-					Value:   osm.DEFAULT_OUTDIR,
-				},
 			},
 		},
 	}
@@ -80,6 +74,12 @@ func main() {
 		&cli.BoolFlag{
 			Name:  "verbose",
 			Usage: "enable verbose logging with DEBUG level",
+		},
+		&cli.StringFlag{
+			Name:    "out",
+			Aliases: []string{"o"},
+			Usage:   "specify a directory to save output instead of stdout",
+			Value:   osm.DEFAULT_OUTDIR,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
