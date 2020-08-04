@@ -9,8 +9,6 @@ import (
 
 type ctxKey string
 
-const DEFAULT_OUTDIR = "./geojson"
-
 const ctxKeyRaw ctxKey = "raw"
 const ctxKeySeparated ctxKey = "separated"
 const ctxKeyOut ctxKey = "out"
@@ -52,13 +50,9 @@ func ctxShouldCombine(ctx context.Context) bool {
 	return !(ok && separated)
 }
 
-func ctxOutDir(ctx context.Context) string {
-	out, ok := ctx.Value(ctxKeyOut).(string)
-	if !ok {
-		return DEFAULT_OUTDIR
-	}
-
-	return out
+func ctxOutDir(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(ctxKeyOut).(string)
+	return v, ok
 }
 
 func ctxRoot(ctx context.Context) (*osm.Relation, bool) {

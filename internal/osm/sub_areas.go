@@ -3,6 +3,7 @@ package osm
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -266,14 +267,23 @@ func reportResult(ctx context.Context, result SubArea) {
 
 func writeFile(ctx context.Context, id int64, data []byte) error {
 	log := ctxLog(ctx)
-	path := filePath(ctx, id)
+	path, ok := filePath(ctx, id)
+	if !ok {
+		return errors.New("invalid directory")
+	}
+
 	log.Infow("writing", "path", path)
 	return ioutil.WriteFile(path, data, 0644)
 }
 
-func filePath(ctx context.Context, id int64) string {
+func filePath(ctx context.Context, id int64) (string, bool) {
+	dir, ok := ctxOutDir(ctx)
+	if !ok {
+		return "", false
+	}
+
 	name := fmt.Sprintf("%d.geojson", id)
-	return filepath.Join(ctxOutDir(ctx), filepath.Base(name))
+	return filepath.Join(dir, filepath.Base(name)), true
 }
 
 func enqueueID(id int64, ids chan<- int64) bool {

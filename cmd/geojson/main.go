@@ -79,7 +79,7 @@ func main() {
 			Name:    "out",
 			Aliases: []string{"o"},
 			Usage:   "specify a directory to save output instead of stdout",
-			Value:   osm.DEFAULT_OUTDIR,
+			Value:   "./geojson",
 		},
 	}
 	app.Before = func(c *cli.Context) error {
