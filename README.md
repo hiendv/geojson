@@ -65,7 +65,7 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --out value, -o value  specify the directory of outputs (default: "./geojson")
+   --out value, -o value  specify the directory of outputs (default: "./geo")
    --verbose              enable verbose logging with DEBUG level (default: false)
    --help, -h             show help (default: false)
    --version, -v          print the version (default: false)
