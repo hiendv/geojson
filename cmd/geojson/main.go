@@ -7,7 +7,9 @@ import (
 	"sort"
 	"time"
 
+	"github.com/hiendv/geojson/internal/hxxp"
 	"github.com/hiendv/geojson/internal/osm"
+	"github.com/hiendv/geojson/pkg/util"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )
@@ -35,6 +37,38 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 			logger.Error(err)
 		}
 		return nil
+	}
+}
+
+func NewServeCommand() func(c *cli.Context) error {
+	return func(c *cli.Context) error {
+		logger, ok := c.App.Metadata["logger"].(*zap.SugaredLogger)
+		if !ok || logger == nil {
+			return nil
+		}
+
+		ttl, err := util.ParseDuration(c.String("rate-ttl"))
+		if err != nil {
+			return errors.New("invalid duration")
+		}
+
+		handler, err := hxxp.New(
+			hxxp.NewContext(
+				c.Context,
+				logger,
+				c.String("address"),
+				c.String("origin"),
+				c.Float64("rate"),
+				c.Int("rate-burst"),
+				ttl,
+				c.String("out"),
+			),
+		)
+		if err != nil {
+			return errors.New("could not create the request handler")
+		}
+
+		return hxxp.Listen(handler)
 	}
 }
 
@@ -66,6 +100,39 @@ func main() {
 					Name:    "separated",
 					Aliases: []string{"s"},
 					Usage:   "leave sub-areas unmerged",
+				},
+			},
+		},
+		{
+			Name:   "serve",
+			Usage:  "serve the web server",
+			Action: NewServeCommand(),
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name:    "address",
+					Aliases: []string{"addr"},
+					Value:   "127.0.0.1:8181",
+					Usage:   "set the serving address",
+				},
+				&cli.StringFlag{
+					Name:  "origin",
+					Value: "*",
+					Usage: "set the CORS origin",
+				},
+				&cli.IntFlag{
+					Name:  "rate",
+					Value: 10,
+					Usage: "set request-per-second for rate-limiting",
+				},
+				&cli.IntFlag{
+					Name:  "rate-burst",
+					Value: 5,
+					Usage: "set burst size (concurrent requests) for rate-limiting",
+				},
+				&cli.StringFlag{
+					Name:  "rate-ttl",
+					Value: "2m",
+					Usage: "set the rate limit TTL for inactive sessions",
 				},
 			},
 		},
