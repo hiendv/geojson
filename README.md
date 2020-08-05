@@ -115,6 +115,7 @@ OPTIONS:
    --rate value                   set request-per-second for rate-limiting (default: 10)
    --rate-burst value             set burst size (concurrent requests) for rate-limiting (default: 5)
    --rate-ttl value               set the rate limit TTL for inactive sessions (default: "2m")
+   --prefix value                 set static fs handler base path (default: "/static")
    --help, -h                     show help (default: false)
 ```
 
