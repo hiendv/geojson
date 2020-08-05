@@ -145,7 +145,7 @@ func main() {
 		&cli.StringFlag{
 			Name:    "out",
 			Aliases: []string{"o"},
-			Usage:   "specify a directory to save output instead of stdout",
+			Usage:   "specify the directory of outputs",
 			Value:   "./geojson",
 		},
 	}
