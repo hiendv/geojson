@@ -17,10 +17,11 @@ const (
 	ctxKeyRateBurst ctxKey = "rate-burst"
 	ctxKeyRateTTL   ctxKey = "rate-ttl"
 	ctxKeyOut       ctxKey = "out"
+	ctxKeyPrefix    ctxKey = "prefix"
 )
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
-func NewContext(ctx context.Context, log shared.Logger, address string, origin string, rate float64, burst int, ttl time.Duration, out string) context.Context {
+func NewContext(ctx context.Context, log shared.Logger, address string, origin string, rate float64, burst int, ttl time.Duration, out string, prefix string) (context.Context, error) {
 	ctxx := map[ctxKey]interface{}{
 		ctxKeyLog:       log,
 		ctxKeyAddress:   address,
@@ -29,6 +30,7 @@ func NewContext(ctx context.Context, log shared.Logger, address string, origin s
 		ctxKeyRateBurst: burst,
 		ctxKeyRateTTL:   ttl,
 		ctxKeyOut:       out,
+		ctxKeyPrefix:    prefix,
 	}
 
 	if log != nil {
@@ -39,7 +41,7 @@ func NewContext(ctx context.Context, log shared.Logger, address string, origin s
 		ctx = context.WithValue(ctx, k, v)
 	}
 
-	return ctx
+	return ctx, nil
 }
 
 func ctxAddress(ctx context.Context) (string, bool) {
@@ -78,5 +80,10 @@ func ctxRateTTL(ctx context.Context) (time.Duration, bool) {
 
 func ctxOutDir(ctx context.Context) (string, bool) {
 	v, ok := ctx.Value(ctxKeyOut).(string)
+	return v, ok
+}
+
+func ctxPrefix(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(ctxKeyPrefix).(string)
 	return v, ok
 }

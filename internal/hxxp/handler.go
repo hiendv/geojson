@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/hiendv/geojson/internal/hxxp/api.v1"
@@ -61,10 +63,15 @@ func New(ctx context.Context) (handler *Handler, err error) {
 		return nil, err
 	}
 
+	prefix, ok := ctxPrefix(ctx)
+	if !ok {
+		prefix = "/"
+	}
+
 	router.GET("/", func(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		util.HTTPRespond(w, []byte(`Hello`))
 	})
-
+	router.ServeFiles(fmt.Sprintf("%s/%s/*filepath", prefix, filepath.Base(dir)), http.Dir(dir))
 	router.GET("/api/v1/subareas/:id", v1SubAreas.Query)
 	return
 }
@@ -125,4 +132,13 @@ func (h Handler) Respond(w http.ResponseWriter, message string, data interface{}
 
 func (h Handler) Error(w http.ResponseWriter, err error, code int) {
 	h.Abort(w, err.Error(), code)
+}
+
+func (h Handler) Static(path string) string {
+	prefix, ok := ctxPrefix(h.ctx)
+	if !ok {
+		return path
+	}
+
+	return filepath.Join(prefix, path)
 }

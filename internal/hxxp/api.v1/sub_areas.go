@@ -47,7 +47,13 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 
 	v, ok := group.cache.Get(id)
 	if ok {
-		group.handler.Respond(w, "", v)
+		path, ok := v.(string)
+		if !ok {
+			group.handler.Abort(w, "invalid path", http.StatusInternalServerError)
+			return
+		}
+
+		group.handler.Respond(w, "", group.handler.Static(path))
 		return
 	}
 
@@ -63,7 +69,7 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 	path, err := osm.FindSubAreas(group.osmContext, id)
 	if err == nil {
 		group.cache.Add(id, path)
-		group.handler.Respond(w, "", path)
+		group.handler.Respond(w, "", group.handler.Static(path))
 		return
 	}
 

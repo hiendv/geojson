@@ -33,7 +33,6 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 			c.Bool("separated"),
 			c.String("out"),
 		)
-
 		if err != nil {
 			return err
 		}
@@ -58,18 +57,22 @@ func NewServeCommand() func(c *cli.Context) error {
 			return errors.New("invalid duration")
 		}
 
-		handler, err := hxxp.New(
-			hxxp.NewContext(
-				c.Context,
-				logger,
-				c.String("address"),
-				c.String("origin"),
-				c.Float64("rate"),
-				c.Int("rate-burst"),
-				ttl,
-				c.String("out"),
-			),
+		ctx, err := hxxp.NewContext(
+			c.Context,
+			logger,
+			c.String("address"),
+			c.String("origin"),
+			c.Float64("rate"),
+			c.Int("rate-burst"),
+			ttl,
+			c.String("out"),
+			c.String("prefix"),
 		)
+		if err != nil {
+			return err
+		}
+
+		handler, err := hxxp.New(ctx)
 		if err != nil {
 			return errors.New("could not create the request handler")
 		}
@@ -139,6 +142,11 @@ func main() {
 					Name:  "rate-ttl",
 					Value: "2m",
 					Usage: "set the rate limit TTL for inactive sessions",
+				},
+				&cli.StringFlag{
+					Name:  "prefix",
+					Value: "/static",
+					Usage: "set static fs handler base path",
 				},
 			},
 		},
