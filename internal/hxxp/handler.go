@@ -51,7 +51,12 @@ func New(ctx context.Context) (handler *Handler, err error) {
 
 	router := httprouter.New()
 	handler = &Handler{ctx: ctx, router: router}
-	v1SubAreas, err := v1.SubAreas(osm.NewContext(ctx, ctxLog(ctx), false, false, dir), handler)
+	osmContext, err := osm.NewContext(ctx, ctxLog(ctx), false, false, dir)
+	if err != nil {
+		return nil, err
+	}
+
+	v1SubAreas, err := v1.SubAreas(osmContext, handler)
 	if err != nil {
 		return nil, err
 	}

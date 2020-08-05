@@ -18,7 +18,7 @@ const (
 )
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
-func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) context.Context {
+func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) (context.Context, error) {
 	ctxx := map[ctxKey]interface{}{
 		ctxKeyLog:       log,
 		ctxKeyRaw:       raw,
@@ -30,11 +30,16 @@ func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool
 		log.Debugw("context", "values", ctxx)
 	}
 
+	err := validateOut(out)
+	if err != nil {
+		return ctx, err
+	}
+
 	for k, v := range ctxx {
 		ctx = context.WithValue(ctx, k, v)
 	}
 
-	return ctx
+	return ctx, nil
 }
 
 func ctxShouldNormalize(ctx context.Context) bool {

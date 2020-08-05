@@ -26,13 +26,19 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 			return nil
 		}
 
-		err := osm.SubAreas(osm.NewContext(
+		ctx, err := osm.NewContext(
 			c.Context,
 			logger,
 			c.Bool("raw"),
 			c.Bool("separated"),
 			c.String("out"),
-		), relation)
+		)
+
+		if err != nil {
+			return err
+		}
+
+		err = osm.SubAreas(ctx, relation)
 		if err != nil {
 			logger.Error(err)
 		}

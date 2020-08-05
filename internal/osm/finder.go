@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+func validateOut(dir string) error {
+	_, err := os.Stat(dir)
+	return err
+}
+
 func FindSubAreas(ctx context.Context, id int64) (string, error) {
 	path, ok := filePath(ctx, id)
 	if !ok {
