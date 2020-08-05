@@ -160,7 +160,7 @@ func main() {
 			Name:    "out",
 			Aliases: []string{"o"},
 			Usage:   "specify the directory of outputs",
-			Value:   "./geojson",
+			Value:   "./geo",
 		},
 	}
 	app.Before = func(c *cli.Context) error {
