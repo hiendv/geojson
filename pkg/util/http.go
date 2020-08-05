@@ -1,4 +1,3 @@
-// Package util provides utilities
 package util
 
 import (
@@ -6,16 +5,19 @@ import (
 	"net/http"
 )
 
+// HTTPError represents a response of an error with code and message
 type HTTPError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
+// HTTPResponse represents a response with data and error
 type HTTPResponse struct {
 	HTTPError `json:",inline"`
 	Data      interface{} `json:"data"`
 }
 
+// HTTPAbort writes headers and JSON body with corresponding message and code
 func HTTPAbort(w http.ResponseWriter, message string, code int) {
 	responseCode := code
 
@@ -37,6 +39,7 @@ func HTTPAbort(w http.ResponseWriter, message string, code int) {
 	w.Write(resp)
 }
 
+// HTTPRespondJSON writes headers and JSON body
 func HTTPRespondJSON(w http.ResponseWriter, message string, data interface{}) {
 	resp, err := json.Marshal(HTTPResponse{HTTPError{0, message}, data})
 	if err != nil {
@@ -49,6 +52,7 @@ func HTTPRespondJSON(w http.ResponseWriter, message string, data interface{}) {
 	HTTPRespond(w, resp)
 }
 
+// HTTPRespond writes body with HTTP code of 200
 func HTTPRespond(w http.ResponseWriter, data []byte) {
 	w.WriteHeader(200)
 
