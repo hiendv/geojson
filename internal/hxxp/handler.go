@@ -77,6 +77,15 @@ func New(ctx context.Context) (handler *Handler, err error) {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// exclude the static serving from middleware
+	_, params, _ := h.router.Lookup(r.Method, r.URL.Path)
+	for _, param := range params {
+		if param.Key == "filepath" {
+			h.router.ServeHTTP(w, r)
+			return
+		}
+	}
+
 	origin, ok := ctxOrigin(h.ctx)
 	if !ok {
 		util.HTTPAbort(w, "missing origin", http.StatusInternalServerError)
