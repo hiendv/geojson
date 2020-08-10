@@ -11,7 +11,7 @@ Because existing tools cannot solve below problems *efficiently*
 These above problems keep showing up and bugging me because my work is closely related. So if you share the same concerns, this tool is for you.
 
 ## Accuracy and Legal Disclaimer
-The accuracy of information provided by the tool solely depends of [OpenStreetMap](https://www.openstreetmap.org/) data.
+The accuracy of information provided by the tool solely depends on [OpenStreetMap](https://www.openstreetmap.org/) data.
 
 I do not accept any responsibility or liability for the accuracy, content, completeness, legality, or reliability of the information provided by the tool or contained on the website.
 
