@@ -2,6 +2,7 @@ package osm
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hiendv/geojson/internal/shared"
 	"github.com/paulmach/osm"
@@ -87,6 +88,35 @@ func CtxSetRewind(ctx context.Context, rewind bool) context.Context {
 	return context.WithValue(ctx, ctxKeyRewind, rewind)
 }
 
-func ctxSetRoot(ctx context.Context, root *osm.Relation) context.Context {
+func CtxSetRoot(ctx context.Context, root *osm.Relation) context.Context {
 	return context.WithValue(ctx, ctxKeyRoot, root)
+}
+
+func CtxBareClone(ctx context.Context) (context.Context, error) {
+	log, ok := ctx.Value(ctxKeyLog).(shared.Logger)
+	if !ok {
+		return ctx, errors.New("invalid context: logger")
+	}
+
+	raw, ok := ctx.Value(ctxKeyRaw).(bool)
+	if !ok {
+		return ctx, errors.New("invalid context: raw")
+	}
+
+	separated, ok := ctx.Value(ctxKeySeparated).(bool)
+	if !ok {
+		return ctx, errors.New("invalid context: separated")
+	}
+
+	out, ok := ctx.Value(ctxKeyOut).(string)
+	if !ok {
+		return ctx, errors.New("invalid context: out")
+	}
+
+	rewind, ok := ctx.Value(ctxKeyRewind).(bool)
+	if !ok {
+		return ctx, errors.New("invalid context: rewind")
+	}
+
+	return NewContext(context.Background(), log, raw, separated, out, rewind)
 }

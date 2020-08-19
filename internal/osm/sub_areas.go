@@ -70,7 +70,7 @@ func SubAreas(ctx context.Context, str string) error {
 
 	log.Debugw("sub-areas matched", "total", len(members))
 
-	ctx = ctxSetRoot(ctx, relation)
+	ctx = CtxSetRoot(ctx, relation)
 
 	var pusher, handler, reporter sync.WaitGroup
 	ids := make(chan int64, CHANNEL_CAP)

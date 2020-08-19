@@ -41,6 +41,12 @@ func SubAreas(ctx context.Context, handler Handler) (*subAreasGroup, error) {
 }
 
 func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	osmContext, err := osm.CtxBareClone(group.osmContext)
+	if err != nil {
+		group.handler.Abort(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
 	if err != nil {
 		group.handler.Error(w, errors.New("invalid ID"), http.StatusUnprocessableEntity)
@@ -49,7 +55,7 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 
 	_, rewind := r.URL.Query()["rewind"]
 	if rewind {
-		group.osmContext = osm.CtxSetRewind(group.osmContext, true)
+		osmContext = osm.CtxSetRewind(osmContext, true)
 	}
 
 	cacheKey := fmt.Sprintf("%d-%v", id, rewind)
@@ -61,7 +67,7 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 			return
 		}
 
-		err := osm.VerifyOutput(group.osmContext, path)
+		err := osm.VerifyOutput(osmContext, path)
 		if err != nil {
 			group.cache.Remove(cacheKey)
 			group.handler.Abort(w, "missing outputs. try again.", http.StatusInternalServerError)
@@ -81,7 +87,7 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 
-	path, err := osm.FindSubAreas(group.osmContext, id)
+	path, err := osm.FindSubAreas(osmContext, id)
 	if err == nil {
 		group.cache.Add(cacheKey, path)
 		group.handler.Respond(w, "", group.handler.Static(path))
@@ -100,13 +106,13 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		}()
 
 		if rewind {
-			osm.SubAreas(group.osmContext, params.ByName("id"))
+			osm.SubAreas(osmContext, params.ByName("id"))
 			return
 		}
 
 		// nolint:errcheck
-		osm.SubAreas(group.osmContext, params.ByName("id"))
+		osm.SubAreas(osmContext, params.ByName("id"))
 	}(group, id)
 
-	group.handler.Respond(w, "Please check back later", nil)
+	group.handler.Respond(w, "check back later", nil)
 }
