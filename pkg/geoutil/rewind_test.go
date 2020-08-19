@@ -78,6 +78,17 @@ func TestRewindRingCounterClockwise(t *testing.T) {
      |               |
    E +---------------+ H
 */
+func TestRewindRingsEmpty(t *testing.T) {
+	is := is.New(t)
+	ring := []orb.Ring{}
+
+	RewindRings(ring, true)
+	is.Equal(ring, []orb.Ring{})
+
+	RewindRings(ring, false)
+	is.Equal(ring, []orb.Ring{})
+}
+
 func TestRewindRingsInverseRFC7946(t *testing.T) {
 	/*
 		https://tools.ietf.org/html/rfc7946#section-3.1.6
@@ -227,6 +238,17 @@ func TestRewindMultiPolygon(t *testing.T) {
 	is.Equal(geo, rewinded)
 }
 
+func TestRewindFeatureInvalid(t *testing.T) {
+	is := is.New(t)
+
+	err := RewindFeature(nil, false)
+	is.True(err != nil)
+
+	feature := geojson.NewFeature(nil)
+	err = RewindFeature(feature, false)
+	is.True(err != nil)
+}
+
 func TestRewindFeature(t *testing.T) {
 	is := is.New(t)
 
@@ -267,6 +289,32 @@ func TestRewindFeature(t *testing.T) {
 	err := RewindFeature(feature, false) // false = CCW
 	is.NoErr(err)
 	is.Equal(feature, rewinded)
+}
+
+func TestRewindFeatureCollectionInvalid(t *testing.T) {
+	is := is.New(t)
+
+	err := RewindFeatureCollection(nil, false)
+	is.True(err != nil)
+
+	fc, err := geojson.UnmarshalFeatureCollection([]byte(`
+		{
+			"type": "FeatureCollection",
+			"features": [
+				{
+					"type": "Feature",
+					"geometry": {
+						"type": "MultiPolygon"
+					}
+				}
+			]
+		}
+	`))
+	is.NoErr(err)
+
+	fc.Features = []*geojson.Feature{geojson.NewFeature(nil)}
+	err = RewindFeatureCollection(fc, false)
+	is.True(err != nil)
 }
 
 func TestRewindFeatureCollection(t *testing.T) {
