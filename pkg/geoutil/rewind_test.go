@@ -109,3 +109,45 @@ func TestRewindRingsInverseRFC7946(t *testing.T) {
 		},
 	})
 }
+
+func TestRewindPolygon(t *testing.T) {
+	is := is.New(t)
+	var polygon, rewinded orb.Polygon
+
+	polygon = []orb.Ring{
+		orb.Ring{
+			orb.Point{1, 1}, // A
+			orb.Point{1, 2}, // B
+			orb.Point{2, 2}, // C
+			orb.Point{2, 1}, // D
+			orb.Point{1, 1}, // A
+		},
+		orb.Ring{
+			orb.Point{0, 0}, // E
+			orb.Point{0, 3}, // F
+			orb.Point{3, 3}, // G
+			orb.Point{3, 0}, // H
+			orb.Point{0, 0}, // E
+		},
+	}
+
+	rewinded = []orb.Ring{
+		orb.Ring{
+			orb.Point{1, 1}, // A
+			orb.Point{2, 1}, // D
+			orb.Point{2, 2}, // C
+			orb.Point{1, 2}, // B
+			orb.Point{1, 1}, // A
+		},
+		orb.Ring{
+			orb.Point{0, 0}, // E
+			orb.Point{0, 3}, // F
+			orb.Point{3, 3}, // G
+			orb.Point{3, 0}, // H
+			orb.Point{0, 0}, // E
+		},
+	}
+
+	RewindGeometry(polygon, false) // false = CCW
+	is.Equal(polygon, rewinded)
+}
