@@ -13,17 +13,19 @@ const (
 	ctxKeyRaw       ctxKey = "raw"
 	ctxKeySeparated ctxKey = "separated"
 	ctxKeyOut       ctxKey = "out"
+	ctxKeyRewind    ctxKey = "rewind"
 	ctxKeyRoot      ctxKey = "root"
 	ctxKeyLog       ctxKey = "log"
 )
 
 // NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
-func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string) (context.Context, error) {
+func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string, rewind bool) (context.Context, error) {
 	ctxx := map[ctxKey]interface{}{
 		ctxKeyLog:       log,
 		ctxKeyRaw:       raw,
 		ctxKeySeparated: separated,
 		ctxKeyOut:       out,
+		ctxKeyRewind:    rewind,
 	}
 
 	if log != nil {
@@ -62,6 +64,11 @@ func ctxOutDir(ctx context.Context) (string, bool) {
 	return v, ok
 }
 
+func ctxShouldRewind(ctx context.Context) bool {
+	rewind, ok := ctx.Value(ctxKeyRewind).(bool)
+	return ok && rewind
+}
+
 func ctxRoot(ctx context.Context) (*osm.Relation, bool) {
 	v, ok := ctx.Value(ctxKeyRoot).(*osm.Relation)
 	return v, ok
@@ -74,6 +81,10 @@ func ctxLog(ctx context.Context) shared.Logger {
 	}
 
 	return v
+}
+
+func CtxSetRewind(ctx context.Context, rewind bool) context.Context {
+	return context.WithValue(ctx, ctxKeyRewind, rewind)
 }
 
 func ctxSetRoot(ctx context.Context, root *osm.Relation) context.Context {

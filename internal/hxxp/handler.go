@@ -53,7 +53,7 @@ func New(ctx context.Context) (handler *Handler, err error) {
 
 	router := httprouter.New()
 	handler = &Handler{ctx: ctx, router: router}
-	osmContext, err := osm.NewContext(ctx, ctxLog(ctx), false, false, dir)
+	osmContext, err := osm.NewContext(ctx, ctxLog(ctx), false, false, dir, false)
 	if err != nil {
 		return nil, err
 	}

@@ -32,6 +32,7 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 			c.Bool("raw"),
 			c.Bool("separated"),
 			c.String("out"),
+			c.Bool("rewind"),
 		)
 		if err != nil {
 			return err
@@ -109,6 +110,10 @@ func main() {
 					Name:    "separated",
 					Aliases: []string{"s"},
 					Usage:   "leave sub-areas unmerged",
+				},
+				&cli.BoolFlag{
+					Name:  "rewind",
+					Usage: "rewind the output - counter to RFC 7946",
 				},
 			},
 		},

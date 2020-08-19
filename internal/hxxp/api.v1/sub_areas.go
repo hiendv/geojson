@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -23,6 +24,7 @@ type subAreasGroup struct {
 type Cache interface {
 	Add(key, value interface{})
 	Get(key interface{}) (value interface{}, ok bool)
+	Remove(key interface{})
 }
 
 func SubAreas(ctx context.Context, handler Handler) (*subAreasGroup, error) {
@@ -45,11 +47,24 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 
-	v, ok := group.cache.Get(id)
+	_, rewind := r.URL.Query()["rewind"]
+	if rewind {
+		group.osmContext = osm.CtxSetRewind(group.osmContext, true)
+	}
+
+	cacheKey := fmt.Sprintf("%d-%v", id, rewind)
+	v, ok := group.cache.Get(cacheKey)
 	if ok {
 		path, ok := v.(string)
 		if !ok {
 			group.handler.Abort(w, "invalid path", http.StatusInternalServerError)
+			return
+		}
+
+		err := osm.VerifyOutput(group.osmContext, path)
+		if err != nil {
+			group.cache.Remove(cacheKey)
+			group.handler.Abort(w, "missing outputs. try again.", http.StatusInternalServerError)
 			return
 		}
 
@@ -62,13 +77,13 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 	group.mu.RUnlock()
 
 	if working {
-		group.handler.Respond(w, "Please check back later", nil)
+		group.handler.Respond(w, "check back later", nil)
 		return
 	}
 
 	path, err := osm.FindSubAreas(group.osmContext, id)
 	if err == nil {
-		group.cache.Add(id, path)
+		group.cache.Add(cacheKey, path)
 		group.handler.Respond(w, "", group.handler.Static(path))
 		return
 	}
@@ -83,6 +98,11 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 			group.processing[id] = false
 			group.mu.Unlock()
 		}()
+
+		if rewind {
+			osm.SubAreas(group.osmContext, params.ByName("id"))
+			return
+		}
 
 		// nolint:errcheck
 		osm.SubAreas(group.osmContext, params.ByName("id"))

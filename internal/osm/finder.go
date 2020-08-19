@@ -16,10 +16,20 @@ func FindSubAreas(ctx context.Context, id int64) (string, error) {
 	if !ok {
 		return "", errors.New("invalid directory")
 	}
-	_, err := os.Stat(path)
+
+	err := VerifyOutput(ctx, path)
 	if err != nil {
-		return "", errors.New("invalid path")
+		return "", err
 	}
 
 	return path, nil
+}
+
+func VerifyOutput(ctx context.Context, path string) error {
+	_, err := os.Stat(path)
+	if err != nil {
+		return errors.New("invalid path")
+	}
+
+	return nil
 }

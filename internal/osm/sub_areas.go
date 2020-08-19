@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/hiendv/geojson/pkg/geoutil"
 	"github.com/hiendv/geojson/pkg/util"
 	"github.com/paulmach/orb/geojson"
 	"github.com/paulmach/osm"
@@ -125,6 +126,7 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 
 	shouldNormalize := ctxShouldNormalize(ctx)
 	shouldCombine := ctxShouldCombine(ctx)
+	shouldRewind := ctxShouldRewind(ctx)
 
 	// whitelisting tags
 	for _, relation := range osmObject.Relations {
@@ -171,6 +173,10 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 	}
 
 	featureCollection.Features = features
+	if shouldRewind {
+		geoutil.RewindFeatureCollection(featureCollection, false)
+	}
+
 	if shouldCombine {
 		return featureCollection, nil, err
 	}
@@ -282,6 +288,12 @@ func filePath(ctx context.Context, id int64) (string, bool) {
 	dir, ok := ctxOutDir(ctx)
 	if !ok {
 		return "", false
+	}
+
+	shouldRewind := ctxShouldRewind(ctx)
+	if shouldRewind {
+		name := fmt.Sprintf("%d-rewind.geojson", id)
+		return filepath.Join(dir, filepath.Base(name)), true
 	}
 
 	name := fmt.Sprintf("%d.geojson", id)
