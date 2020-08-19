@@ -9,9 +9,9 @@ import (
 
 	"github.com/hiendv/geojson/internal/hxxp"
 	"github.com/hiendv/geojson/internal/osm"
+	"github.com/hiendv/geojson/internal/shared"
 	"github.com/hiendv/geojson/pkg/util"
 	"github.com/urfave/cli/v2"
-	"go.uber.org/zap"
 )
 
 func NewSubAreaCommand() func(c *cli.Context) error {
@@ -21,9 +21,9 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 			return errors.New("invalid OpenStreetMap relation ID")
 		}
 
-		logger, ok := c.App.Metadata["logger"].(*zap.SugaredLogger)
+		logger, ok := c.App.Metadata["logger"].(shared.Logger)
 		if !ok || logger == nil {
-			return nil
+			return errors.New("invalid logger")
 		}
 
 		ctx, err := osm.NewContext(
@@ -48,9 +48,9 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 
 func NewServeCommand() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		logger, ok := c.App.Metadata["logger"].(*zap.SugaredLogger)
+		logger, ok := c.App.Metadata["logger"].(shared.Logger)
 		if !ok || logger == nil {
-			return nil
+			return errors.New("invalid logger")
 		}
 
 		ttl, err := util.ParseDuration(c.String("rate-ttl"))
@@ -169,19 +169,7 @@ func main() {
 		},
 	}
 	app.Before = func(c *cli.Context) error {
-		var logger *zap.SugaredLogger
-		verbose := c.Bool("verbose")
-		if verbose {
-			logger, err := setupLogger(true)
-			if err != nil {
-				return err
-			}
-
-			app.Metadata["logger"] = logger
-			return nil
-		}
-
-		logger, err := setupLogger(false)
+		logger, err := shared.NewLoggerZap(c.Bool("verbose"))
 		if err != nil {
 			return err
 		}
@@ -190,7 +178,7 @@ func main() {
 		return nil
 	}
 	app.After = func(c *cli.Context) error {
-		logger, ok := app.Metadata["logger"].(*zap.SugaredLogger)
+		logger, ok := app.Metadata["logger"].(shared.Logger)
 		if !ok || logger == nil {
 			return nil
 		}
@@ -211,27 +199,4 @@ func main() {
 
 	log.Println(err)
 	os.Exit(1)
-}
-
-func setupLogger(verbose bool) (*zap.SugaredLogger, error) {
-	config := zap.Config{
-		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),
-		Development:      false,
-		DisableCaller:    true,
-		Encoding:         "console",
-		EncoderConfig:    zap.NewDevelopmentEncoderConfig(),
-		OutputPaths:      []string{"stderr"},
-		ErrorOutputPaths: []string{"stderr"},
-	}
-
-	if verbose {
-		config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
-	}
-
-	logCore, err := config.Build()
-	if err != nil {
-		return nil, err
-	}
-
-	return logCore.Sugar(), nil
 }

@@ -118,5 +118,5 @@ func CtxBareClone(ctx context.Context) (context.Context, error) {
 		return ctx, errors.New("invalid context: rewind")
 	}
 
-	return NewContext(context.Background(), log, raw, separated, out, rewind)
+	return NewContext(context.Background(), log.Clone(), raw, separated, out, rewind)
 }
