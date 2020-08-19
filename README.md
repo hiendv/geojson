@@ -1,6 +1,15 @@
+![geojson](geojson.png)
+
 # GeoJSON
 The missing GeoJSON utilities for OpenStreetMap
-![geojson](geojson.png)
+
+![Travis (.org)](https://img.shields.io/travis/hiendv/geojson?style=flat-square)
+![Codecov](https://img.shields.io/codecov/c/github/hiendv/geojson?style=flat-square)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/hiendv/geojson)](https://pkg.go.dev/github.com/hiendv/geojson)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hiendv/geojson)](https://goreportcard.com/report/github.com/hiendv/geojson)
+![GitHub](https://img.shields.io/github/license/hiendv/geojson?style=flat-square)
+
+---
 
 ## Why this?
 Because existing tools cannot solve below problems *efficiently*
@@ -94,6 +103,7 @@ USAGE:
 OPTIONS:
    --raw, -r        leave tags in unfornalized form (UNF) (default: false)
    --separated, -s  leave sub-areas unmerged (default: false)
+   --rewind         rewind the output - counter to RFC 7946 (default: false)
    --help, -h       show help (default: false)
 ```
 
@@ -135,15 +145,16 @@ go build -o geojson cmd/geojson/main.go
 ### Linting & Formatting
 ```sh
 ### Format
-gofumpt -w cmd internal pkg
+gofumpt -w -s cmd internal pkg
 
 ### Lint
 golangci-lint run ./...
 ```
 
 ### Testing
-*coming soon*
-
+```sh
+go test -race ./...
+```
 
 ## Contribution
 Issues and PRs are welcome !
