@@ -33,6 +33,7 @@ type subArea struct {
 	err  error
 }
 
+// SubAreas constructs a GeoJSON output of an OpenStreetMap relation ID
 func SubAreas(ctx context.Context, str string) error {
 	log := ctxLog(ctx)
 	log.Debugw("constants", "channel_cap", constChannelCap, "worker_cap", constWorkerCap)

@@ -26,7 +26,7 @@ func FindSubAreas(ctx context.Context, id int64) (string, error) {
 	return path, nil
 }
 
-// FindSubAreas makes sure that output files of a sub-area exist.
+// VerifyOutput makes sure that output files of a sub-area exist.
 func VerifyOutput(ctx context.Context, path string) error {
 	_, err := os.Stat(path)
 	if err != nil {

@@ -47,7 +47,7 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 	}
 }
 
-// NewSubAreaCommand constructs sub-command Serve.
+// NewServeCommand constructs sub-command Serve.
 func NewServeCommand() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
 		logger, ok := c.App.Metadata["logger"].(shared.Logger)

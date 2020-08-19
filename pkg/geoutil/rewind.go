@@ -15,7 +15,6 @@ const (
 
 // RewindFeatureCollection rewinds a GeoJSON feature collection.
 // The second parameter is the direction of winding. True means clockwise.
-
 func RewindFeatureCollection(fc *geojson.FeatureCollection, outer bool) error {
 	if fc == nil {
 		return errors.New("invalid feature collection")

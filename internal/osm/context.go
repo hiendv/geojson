@@ -95,7 +95,7 @@ func CtxSetRoot(ctx context.Context, root *osm.Relation) context.Context {
 }
 
 // CtxBareClone makes a copy of this context.
-// It also makes sure that non-primative values like logger are deep-copied.
+// It also makes sure that non-primitive values like logger are deep-copied.
 func CtxBareClone(ctx context.Context) (context.Context, error) {
 	log, ok := ctx.Value(ctxKeyLog).(shared.Logger)
 	if !ok {
