@@ -88,7 +88,7 @@ COPYRIGHT:
 geojson --out "" command [command options] [arguments...]
 ```
 
-### subarea
+#### subarea
 ```sh
 geojson subarea --help
 ```
@@ -107,7 +107,7 @@ OPTIONS:
    --help, -h       show help (default: false)
 ```
 
-### serve
+#### serve
 ```sh
 geojson serve --help
 ```
@@ -127,6 +127,61 @@ OPTIONS:
    --rate-ttl value               set the rate limit TTL for inactive sessions (default: "2m")
    --prefix value                 set static fs handler base path (default: "/static")
    --help, -h                     show help (default: false)
+```
+
+### API
+#### Rate-limiting
+The rate-limiting will be specified by `--rate`, `--rtate-burst`, `--rate-ttl` parameters.
+Default values should be 10 requests/second with a concurrent value of 5 and time-to-live for inactive sessions of 2 minutes.
+
+#### List sub-areas of an OpenStreetMap relation [GET /api/v1/subareas/{id}{?rewind}]
++ Parameters
+    + id (number, required) - ID of an OpenStreetMap relation.
+    + rewind (optional) - Rewinding the requested GeoJSON
+
++ Response 200 (application/json)
+    + Attributes
+        - code (number)
+        - message (string)
+        - data (string)
+
+Example
+```
+GET /api/v1/subareas/61320?rewind HTTP/1.1
+Host: localhost:8181
+User-Agent: curl/7.68.0
+Accept: */*
+
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Allow-Origin: *
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+Date: Wed, 19 Aug 2020 16:25:13 GMT
+Content-Length: 58
+
+{"code":0,"message":"","data":"/static/geo/61320-rewind.geojson"}
+```
+
+#### GeoJSON of an OpenStreetMap relation [GET /{prefix}/{out}/{filename}.geojson]
+Example
+```
+GET /static/geo/61320.geojson HTTP/1.1
+Host: localhost:8181
+User-Agent: curl/7.68.0
+Accept: */*
+
+
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Length: 1298442
+Content-Type: text/plain; charset=utf-8
+Last-Modified: Wed, 19 Aug 2020 11:47:13 GMT
+Date: Wed, 19 Aug 2020 16:37:00 GMT
+
+{"type":"FeatureCollection","features":[{"id":"relation/962876","type":"Feature","geometry":{...}}]}
+
 ```
 
 ## Development
