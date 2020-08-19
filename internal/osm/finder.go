@@ -11,6 +11,7 @@ func validateOut(dir string) error {
 	return err
 }
 
+// FindSubAreas looks for outputs of a sub-area.
 func FindSubAreas(ctx context.Context, id int64) (string, error) {
 	path, ok := filePath(ctx, id)
 	if !ok {
@@ -25,6 +26,7 @@ func FindSubAreas(ctx context.Context, id int64) (string, error) {
 	return path, nil
 }
 
+// FindSubAreas makes sure that output files of a sub-area exist.
 func VerifyOutput(ctx context.Context, path string) error {
 	_, err := os.Stat(path)
 	if err != nil {

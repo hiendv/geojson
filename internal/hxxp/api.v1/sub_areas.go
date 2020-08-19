@@ -21,12 +21,14 @@ type subAreasGroup struct {
 	mu         sync.RWMutex
 }
 
+// Cache is the contract of cache.
 type Cache interface {
 	Add(key, value interface{})
 	Get(key interface{}) (value interface{}, ok bool)
 	Remove(key interface{})
 }
 
+// SubAreas constructs the routing group itself.
 func SubAreas(ctx context.Context, handler Handler) (*subAreasGroup, error) {
 	if handler == nil {
 		return nil, errors.New("invalid HTTP handler")

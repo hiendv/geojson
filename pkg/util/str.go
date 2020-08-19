@@ -8,7 +8,7 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// NormalizeString transforms an unicode string str to ASCII form
+// NormalizeString transforms an unicode string str to ASCII form.
 func NormalizeString(str string) string {
 	normalizer := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	input := []byte(str)

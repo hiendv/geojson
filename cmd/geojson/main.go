@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// NewSubAreaCommand constructs sub-command SubArea.
 func NewSubAreaCommand() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
 		relation := c.Args().First()
@@ -46,6 +47,7 @@ func NewSubAreaCommand() func(c *cli.Context) error {
 	}
 }
 
+// NewSubAreaCommand constructs sub-command Serve.
 func NewServeCommand() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
 		logger, ok := c.App.Metadata["logger"].(shared.Logger)

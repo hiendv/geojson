@@ -4,6 +4,7 @@ import (
 	"reflect"
 )
 
+// ReverseAny takes a slice of anything and reverse it.
 func ReverseAny(s interface{}) {
 	n := reflect.ValueOf(s).Len()
 	swap := reflect.Swapper(s)

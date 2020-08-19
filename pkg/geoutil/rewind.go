@@ -13,6 +13,9 @@ const (
 	geometryPolygon      = "Polygon"
 )
 
+// RewindFeatureCollection rewinds a GeoJSON feature collection.
+// The second parameter is the direction of winding. True means clockwise.
+
 func RewindFeatureCollection(fc *geojson.FeatureCollection, outer bool) error {
 	if fc == nil {
 		return errors.New("invalid feature collection")
@@ -28,6 +31,8 @@ func RewindFeatureCollection(fc *geojson.FeatureCollection, outer bool) error {
 	return nil
 }
 
+// RewindFeature rewinds a GeoJSON feature.
+// The second parameter is the direction of winding. True means clockwise.
 func RewindFeature(f *geojson.Feature, outer bool) error {
 	if f == nil {
 		return errors.New("invalid feature")
@@ -41,6 +46,8 @@ func RewindFeature(f *geojson.Feature, outer bool) error {
 	return nil
 }
 
+// RewindGeometry rewinds a GeoJSON geometry.
+// The second parameter is the direction of winding. True means clockwise.
 func RewindGeometry(g orb.Geometry, outer bool) error {
 	if g == nil {
 		return errors.New("invalid geometry")
@@ -72,6 +79,8 @@ func RewindGeometry(g orb.Geometry, outer bool) error {
 	return errors.New("geometry type not supported")
 }
 
+// RewindRings rewinds GeoJSON rings.
+// The second parameter is the direction of winding. True means clockwise.
 func RewindRings(rings []orb.Ring, outer bool) []orb.Ring {
 	if len(rings) == 0 {
 		return rings
@@ -85,6 +94,8 @@ func RewindRings(rings []orb.Ring, outer bool) []orb.Ring {
 	return rings
 }
 
+// RewindRing rewinds a GeoJSON ring.
+// The second parameter is the direction of winding. True means clockwise.
 func RewindRing(ring orb.Ring, cw bool) {
 	// Shoelace formula: https://mathworld.wolfram.com/PolygonArea.html
 	var area float64 = 0

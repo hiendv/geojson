@@ -7,6 +7,7 @@ import (
 	"github.com/hiendv/geojson/pkg/util"
 )
 
+// CORS is an HTTP middleware which specifies related headers.
 func CORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		origin, ok := ctxx.Origin(r.Context())

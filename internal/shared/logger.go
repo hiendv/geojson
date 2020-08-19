@@ -1,5 +1,6 @@
 package shared
 
+// Logger is the contract of an application logger.
 type Logger interface {
 	Infow(string, ...interface{})
 	Debugw(string, ...interface{})
@@ -25,4 +26,5 @@ func (logger *loggerNoop) Clone() Logger {
 	return logger
 }
 
+// LoggerNoop is a logger which does nothing.
 var LoggerNoop = &loggerNoop{}

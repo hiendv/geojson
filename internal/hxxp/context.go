@@ -20,7 +20,7 @@ const (
 	ctxKeyPrefix    ctxKey = "prefix"
 )
 
-// NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
+// NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision.
 func NewContext(ctx context.Context, log shared.Logger, address string, origin string, rate float64, burst int, ttl time.Duration, out string, prefix string) (context.Context, error) {
 	ctxx := map[ctxKey]interface{}{
 		ctxKeyLog:       log,

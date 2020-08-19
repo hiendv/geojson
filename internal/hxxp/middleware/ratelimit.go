@@ -64,6 +64,7 @@ func cleanupLimit() {
 	}
 }
 
+// RateLimit is an HTTP middleware which limits requests base on client IP addresses.
 func RateLimit(next http.Handler, rps float64, burst int, ttl time.Duration) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		limiter := limit(r.Context(), rps, burst, ttl)

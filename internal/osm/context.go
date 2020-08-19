@@ -19,7 +19,7 @@ const (
 	ctxKeyLog       ctxKey = "log"
 )
 
-// NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision
+// NewContext is the utility to encapsulate pkg-scoped context values by preventing context key collision.
 func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool, out string, rewind bool) (context.Context, error) {
 	ctxx := map[ctxKey]interface{}{
 		ctxKeyLog:       log,
@@ -84,14 +84,18 @@ func ctxLog(ctx context.Context) shared.Logger {
 	return v
 }
 
+// CtxSetRewind sets "rewind" value to this context.
 func CtxSetRewind(ctx context.Context, rewind bool) context.Context {
 	return context.WithValue(ctx, ctxKeyRewind, rewind)
 }
 
+// CtxSetRoot sets "root" value to this context.
 func CtxSetRoot(ctx context.Context, root *osm.Relation) context.Context {
 	return context.WithValue(ctx, ctxKeyRoot, root)
 }
 
+// CtxBareClone makes a copy of this context.
+// It also makes sure that non-primative values like logger are deep-copied.
 func CtxBareClone(ctx context.Context) (context.Context, error) {
 	log, ok := ctx.Value(ctxKeyLog).(shared.Logger)
 	if !ok {
