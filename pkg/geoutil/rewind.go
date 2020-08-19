@@ -31,45 +31,43 @@ func RewindFeature(f *geojson.Feature, outer bool) error {
 		return errors.New("invalid feature")
 	}
 
-	geometry, err := RewindGeometry(f.Geometry, outer)
+	err := RewindGeometry(f.Geometry, outer)
 	if err != nil {
 		return err
 	}
 
-	f.Geometry = geometry
-
 	return nil
 }
 
-func RewindGeometry(g orb.Geometry, outer bool) (orb.Geometry, error) {
+func RewindGeometry(g orb.Geometry, outer bool) error {
 	if g == nil {
-		return nil, errors.New("invalid geometry")
+		return errors.New("invalid geometry")
 	}
 
 	if g.GeoJSONType() == geometryPolygon {
 		mp, ok := g.(orb.Polygon)
 		if !ok {
-			return nil, errors.New("invalid Polygon")
+			return errors.New("invalid Polygon")
 		}
 
-		mp = RewindRings(mp, outer)
-		return mp, nil
+		RewindRings(mp, outer)
+		return nil
 	}
 
 	if g.GeoJSONType() == geometryMultiPolygon {
 		mp, ok := g.(orb.MultiPolygon)
 		if !ok {
-			return nil, errors.New("invalid MultiPolygon")
+			return errors.New("invalid MultiPolygon")
 		}
 
-		for i, p := range mp {
-			mp[i] = RewindRings(p, outer)
+		for _, p := range mp {
+			RewindRings(p, outer)
 		}
 
-		return mp, nil
+		return nil
 	}
 
-	return g, errors.New("geometry type not supported")
+	return errors.New("geometry type not supported")
 }
 
 func RewindRings(rings []orb.Ring, outer bool) []orb.Ring {
