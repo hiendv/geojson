@@ -106,6 +106,7 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		}()
 
 		if rewind {
+			// nolint:errcheck
 			osm.SubAreas(osmContext, params.ByName("id"))
 			return
 		}

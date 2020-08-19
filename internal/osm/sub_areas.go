@@ -174,7 +174,10 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 
 	featureCollection.Features = features
 	if shouldRewind {
-		geoutil.RewindFeatureCollection(featureCollection, false)
+		err := geoutil.RewindFeatureCollection(featureCollection, false)
+		if err != nil {
+			return featureCollection, nil, err
+		}
 	}
 
 	if shouldCombine {

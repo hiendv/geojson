@@ -95,8 +95,5 @@ func RewindRing(ring orb.Ring, cw bool) {
 
 	if area >= 0 != cw {
 		util.ReverseAny(ring)
-		return
 	}
-
-	return
 }

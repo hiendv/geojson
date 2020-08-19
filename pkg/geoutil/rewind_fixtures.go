@@ -20,9 +20,6 @@ func (p *invalidPolygon) Bound() orb.Bound {
 	return orb.Bound{Min: orb.Point{1, 1}, Max: orb.Point{-1, -1}}
 }
 
-func (p *invalidPolygon) private() {
-}
-
 type invalidMultiPolygon struct {
 	orb.Polygon
 }
@@ -37,7 +34,4 @@ func (p *invalidMultiPolygon) Dimensions() int {
 
 func (p *invalidMultiPolygon) Bound() orb.Bound {
 	return orb.Bound{Min: orb.Point{1, 1}, Max: orb.Point{-1, -1}}
-}
-
-func (p *invalidMultiPolygon) private() {
 }
