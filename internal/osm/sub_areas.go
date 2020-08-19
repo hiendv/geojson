@@ -19,14 +19,14 @@ import (
 )
 
 const (
-	ROLE_SUBAREA = "subarea"
-	CHANNEL_CAP  = 1000
-	WORKER_CAP   = 10
+	constRoleSubArea = "subarea"
+	constChannelCap  = 1000
+	constWorkerCap   = 10
 )
 
-var TAGS = []string{"name", "type"}
+var constTags = []string{"name", "type"} // slice isn't immutable by nature
 
-type SubArea struct {
+type subArea struct {
 	id   int64
 	fc   *geojson.FeatureCollection
 	json []byte
@@ -35,7 +35,7 @@ type SubArea struct {
 
 func SubAreas(ctx context.Context, str string) error {
 	log := ctxLog(ctx)
-	log.Debugw("constants", "channel_cap", CHANNEL_CAP, "worker_cap", WORKER_CAP)
+	log.Debugw("constants", "channel_cap", constChannelCap, "worker_cap", constWorkerCap)
 
 	id, err := util.Int64FromString(str)
 	if err != nil {
@@ -56,7 +56,7 @@ func SubAreas(ctx context.Context, str string) error {
 
 	// creating workers for pushing
 	for _, member := range relation.Members {
-		if member.Role != ROLE_SUBAREA {
+		if member.Role != constRoleSubArea {
 			continue
 		}
 
@@ -73,14 +73,14 @@ func SubAreas(ctx context.Context, str string) error {
 	ctx = CtxSetRoot(ctx, relation)
 
 	var pusher, handler, reporter sync.WaitGroup
-	ids := make(chan int64, CHANNEL_CAP)
-	results := make(chan SubArea, CHANNEL_CAP)
+	ids := make(chan int64, constChannelCap)
+	results := make(chan subArea, constChannelCap)
 
 	reporter.Add(1) // spawn once only
 	go reportResults(ctx, &reporter, results)
 
 	// creating workers for handling
-	for i := 0; i < WORKER_CAP; i++ {
+	for i := 0; i < constWorkerCap; i++ {
 		handler.Add(1)
 		go handleMembers(ctx, &handler, ids, results)
 	}
@@ -104,12 +104,12 @@ func SubAreas(ctx context.Context, str string) error {
 	return nil
 }
 
-func handleMembers(ctx context.Context, wg *sync.WaitGroup, ids <-chan int64, results chan<- SubArea) {
+func handleMembers(ctx context.Context, wg *sync.WaitGroup, ids <-chan int64, results chan<- subArea) {
 	defer wg.Done()
 
 	for id := range ids {
 		fc, b, err := handleMember(ctx, id)
-		results <- SubArea{id, fc, b, err}
+		results <- subArea{id, fc, b, err}
 	}
 }
 
@@ -131,7 +131,7 @@ func handleMember(ctx context.Context, id int64) (*geojson.FeatureCollection, []
 	// whitelisting tags
 	for _, relation := range osmObject.Relations {
 		tags := osm.Tags{}
-		for _, tagName := range TAGS {
+		for _, tagName := range constTags {
 			var newTag osm.Tag
 			tag := osm.Tag{Key: tagName, Value: relation.Tags.Find(tagName)}
 			if shouldNormalize {
@@ -207,7 +207,7 @@ func pushMember(ctx context.Context, wg *sync.WaitGroup, ids chan<- int64, id in
 	}
 }
 
-func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubArea) {
+func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan subArea) {
 	defer wg.Done()
 
 	shouldCombine := ctxShouldCombine(ctx)
@@ -257,7 +257,7 @@ func reportResults(ctx context.Context, wg *sync.WaitGroup, results <-chan SubAr
 	}
 }
 
-func reportResult(ctx context.Context, result SubArea) {
+func reportResult(ctx context.Context, result subArea) {
 	log := ctxLog(ctx)
 	if result.err != nil {
 		log.Error(result.err)
