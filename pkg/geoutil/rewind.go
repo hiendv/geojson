@@ -8,8 +8,10 @@ import (
 	"github.com/paulmach/orb/geojson"
 )
 
-const geometryMultiPolygon = "MultiPolygon"
-const geometryPolygon = "Polygon"
+const (
+	geometryMultiPolygon = "MultiPolygon"
+	geometryPolygon      = "Polygon"
+)
 
 func RewindFeatureCollection(fc *geojson.FeatureCollection, outer bool) error {
 	if fc == nil {

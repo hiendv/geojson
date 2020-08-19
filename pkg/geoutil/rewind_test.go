@@ -97,14 +97,14 @@ func TestRewindRingsInverseRFC7946(t *testing.T) {
 
 	is := is.New(t)
 	rings := []orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{1, 2}, // B
 			orb.Point{2, 2}, // C
 			orb.Point{2, 1}, // D
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -115,14 +115,14 @@ func TestRewindRingsInverseRFC7946(t *testing.T) {
 
 	RewindRings(rings, false) // false = CCW
 	is.Equal(rings, []orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{2, 1}, // D
 			orb.Point{2, 2}, // C
 			orb.Point{1, 2}, // B
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -157,14 +157,14 @@ func TestRewindPolygon(t *testing.T) {
 	var geo, rewinded orb.Geometry
 
 	geo = orb.Polygon([]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{1, 2}, // B
 			orb.Point{2, 2}, // C
 			orb.Point{2, 1}, // D
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -174,14 +174,14 @@ func TestRewindPolygon(t *testing.T) {
 	})
 
 	rewinded = orb.Polygon([]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{2, 1}, // D
 			orb.Point{2, 2}, // C
 			orb.Point{1, 2}, // B
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -200,14 +200,14 @@ func TestRewindMultiPolygon(t *testing.T) {
 	var geo, rewinded orb.Geometry
 
 	geo = orb.MultiPolygon([]orb.Polygon{[]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{1, 2}, // B
 			orb.Point{2, 2}, // C
 			orb.Point{2, 1}, // D
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -217,14 +217,14 @@ func TestRewindMultiPolygon(t *testing.T) {
 	}})
 
 	rewinded = orb.MultiPolygon([]orb.Polygon{[]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{2, 1}, // D
 			orb.Point{2, 2}, // C
 			orb.Point{1, 2}, // B
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -253,14 +253,14 @@ func TestRewindFeature(t *testing.T) {
 	is := is.New(t)
 
 	feature := geojson.NewFeature(orb.Polygon([]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{1, 2}, // B
 			orb.Point{2, 2}, // C
 			orb.Point{2, 1}, // D
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G
@@ -270,14 +270,14 @@ func TestRewindFeature(t *testing.T) {
 	}))
 
 	rewinded := geojson.NewFeature(orb.Polygon([]orb.Ring{
-		orb.Ring{
+		{
 			orb.Point{1, 1}, // A
 			orb.Point{2, 1}, // D
 			orb.Point{2, 2}, // C
 			orb.Point{1, 2}, // B
 			orb.Point{1, 1}, // A
 		},
-		orb.Ring{
+		{
 			orb.Point{0, 0}, // E
 			orb.Point{0, 3}, // F
 			orb.Point{3, 3}, // G

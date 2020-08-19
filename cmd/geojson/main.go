@@ -87,7 +87,7 @@ func main() {
 	app.Name = "GeoJSON"
 	app.Usage = "Utilities for OpenStreetMap GeoJSON"
 	app.Authors = []*cli.Author{
-		&cli.Author{
+		{
 			Name:  "Hien Dao",
 			Email: "hien.dv.neo@gmail.com",
 		},
