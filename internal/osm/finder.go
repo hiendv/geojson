@@ -6,8 +6,13 @@ import (
 	"os"
 )
 
-func validateOut(dir string) error {
-	_, err := os.Stat(dir)
+func validateOut(path string) error {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		os.Mkdir(path, 0o700)
+		return nil
+	}
+
 	return err
 }
 
