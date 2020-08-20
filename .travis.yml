@@ -14,7 +14,7 @@ before_install:
   - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
 
 script:
-  - if [[ $TRAVIS_GO_VERSION > 1.12 ]]; then test -z "$(gofumpt -l -s -d ./..)"; fi
+  - if [[ $TRAVIS_GO_VERSION > 1.12 ]]; then test -z "$(gofumpt -l -s -d ./)"; fi
   - golangci-lint run ./...
   - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 

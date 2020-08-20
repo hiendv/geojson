@@ -200,7 +200,7 @@ go build -o geojson cmd/geojson/main.go
 ### Linting & Formatting
 ```sh
 ### Format
-gofumpt -w -s cmd internal pkg
+gofumpt -w -s ./
 
 ### Lint
 golangci-lint run ./...
