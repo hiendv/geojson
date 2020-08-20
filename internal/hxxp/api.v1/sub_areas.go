@@ -10,11 +10,13 @@ import (
 
 	"github.com/hashicorp/golang-lru"
 	"github.com/hiendv/geojson/internal/osm"
+	"github.com/hiendv/geojson/internal/shared"
 	"github.com/julienschmidt/httprouter"
 )
 
 type subAreasGroup struct {
 	handler    Handler
+	logger     shared.Logger
 	osmContext context.Context
 	cache      Cache
 	processing map[int64]bool
@@ -29,7 +31,7 @@ type Cache interface {
 }
 
 // SubAreas constructs the routing group itself.
-func SubAreas(ctx context.Context, handler Handler) (*subAreasGroup, error) {
+func SubAreas(logger shared.Logger, osmContext context.Context, handler Handler) (*subAreasGroup, error) {
 	if handler == nil {
 		return nil, errors.New("invalid HTTP handler")
 	}
@@ -39,7 +41,7 @@ func SubAreas(ctx context.Context, handler Handler) (*subAreasGroup, error) {
 		return nil, errors.New("invalid cache")
 	}
 
-	return &subAreasGroup{handler: handler, osmContext: ctx, cache: cache, processing: map[int64]bool{}}, nil
+	return &subAreasGroup{handler: handler, logger: logger, osmContext: osmContext, cache: cache, processing: map[int64]bool{}}, nil
 }
 
 func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -108,13 +110,17 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		}()
 
 		if rewind {
-			// nolint:errcheck
-			osm.SubAreas(osmContext, params.ByName("id"))
+			err := osm.SubAreas(osmContext, params.ByName("id"))
+			if err != nil {
+				group.logger.Error(err)
+			}
 			return
 		}
 
-		// nolint:errcheck
-		osm.SubAreas(osmContext, params.ByName("id"))
+		err := osm.SubAreas(osmContext, params.ByName("id"))
+		if err != nil {
+			group.logger.Error(err)
+		}
 	}(group, id)
 
 	group.handler.Respond(w, "check back later", nil)

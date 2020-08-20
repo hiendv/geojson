@@ -61,7 +61,7 @@ func New(ctx context.Context) (handler *Handler, err error) {
 		return nil, err
 	}
 
-	v1SubAreas, err := v1.SubAreas(osmContext, handler)
+	v1SubAreas, err := v1.SubAreas(ctxLog(ctx), osmContext, handler)
 	if err != nil {
 		return nil, err
 	}
