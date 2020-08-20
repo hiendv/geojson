@@ -10,11 +10,11 @@ go:
 
 before_install:
   - go get -v -t -d ./...
-  - GO111MODULE=on go get mvdan.cc/gofumpt
+  - if [[ $TRAVIS_GO_VERSION > 1.12 ]]; then GO111MODULE=on go get mvdan.cc/gofumpt; fi
   - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
 
 script:
-  - gofumpt -w -s ./..
+  - if [[ $TRAVIS_GO_VERSION > 1.12 ]]; then gofumpt -w -s ./..; fi
   - golangci-lint run ./...
   - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
