@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/hashicorp/golang-lru"
 	"github.com/hiendv/geojson/internal/osm"
@@ -14,12 +15,22 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const (
+	constTTL = time.Second * 10
+)
+
+type osmError struct {
+	err       error
+	expiredAt time.Time
+}
+
 type subAreasGroup struct {
 	handler    Handler
 	logger     shared.Logger
 	osmContext context.Context
 	cache      Cache
 	processing map[int64]bool
+	errors     Cache
 	mu         sync.RWMutex
 }
 
@@ -41,7 +52,12 @@ func SubAreas(logger shared.Logger, osmContext context.Context, handler Handler)
 		return nil, errors.New("invalid cache")
 	}
 
-	return &subAreasGroup{handler: handler, logger: logger, osmContext: osmContext, cache: cache, processing: map[int64]bool{}}, nil
+	errorCache, err := lru.New2Q(5000)
+	if err != nil {
+		return nil, errors.New("invalid cache")
+	}
+
+	return &subAreasGroup{handler: handler, logger: logger, osmContext: osmContext, cache: cache, processing: map[int64]bool{}, errors: errorCache}, nil
 }
 
 func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -82,6 +98,31 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 
+	v, ok = group.errors.Get(id)
+	if ok {
+		osmErr, ok := v.(osmError)
+		if !ok {
+			group.errors.Remove(id)
+			group.handler.Abort(w, "invalid OSM error", http.StatusInternalServerError)
+			return
+		}
+
+		if time.Since(osmErr.expiredAt) < 0 {
+			if osm.ErrIsClient(osmErr.err) {
+				group.handler.Abort(w, osmErr.err.Error(), http.StatusUnprocessableEntity)
+				return
+			}
+
+			w.Header().Set("Retry-After", osmErr.expiredAt.UTC().Format(http.TimeFormat))
+			group.handler.Abort(w, osmErr.err.Error(), http.StatusServiceUnavailable)
+			return
+		}
+
+		if time.Since(osmErr.expiredAt) >= 0 {
+			group.errors.Remove(id)
+		}
+	}
+
 	group.mu.RLock()
 	working := group.processing[id]
 	group.mu.RUnlock()
@@ -105,15 +146,21 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 	go func(group *subAreasGroup, id int64) {
 		defer func() {
 			group.mu.Lock()
-			group.processing[id] = false
+			delete(group.processing, id)
 			group.mu.Unlock()
 		}()
 
 		err := osm.SubAreas(osmContext, params.ByName("id"))
-		if err != nil {
-			group.logger.Error(err)
+		if err == nil {
+			return
 		}
+
+		group.logger.Error(err)
+		group.errors.Add(id, osmError{
+			err:       err,
+			expiredAt: time.Now().Add(constTTL),
+		})
 	}(group, id)
 
-	group.handler.Respond(w, "check back later", nil)
+	group.handler.Respond(w, "enqueued. check back later", nil)
 }
