@@ -95,7 +95,7 @@ func main() {
 		},
 	}
 	app.Copyright = "Copyright © 2020 Hien Dao. All Rights Reserved."
-	app.Version = "0.1.0"
+	app.Version = "0.1.1"
 	app.Compiled = time.Now()
 	app.Commands = []*cli.Command{
 		{
