@@ -285,7 +285,7 @@ func writeFile(ctx context.Context, id int64, data []byte) error {
 	}
 
 	log.Infow("writing", "path", path)
-	return ioutil.WriteFile(path, data, 0644)
+	return ioutil.WriteFile(path, data, 0o644)
 }
 
 func filePath(ctx context.Context, id int64) (string, bool) {
