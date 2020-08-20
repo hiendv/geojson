@@ -109,14 +109,6 @@ func (group *subAreasGroup) Query(w http.ResponseWriter, r *http.Request, params
 			group.mu.Unlock()
 		}()
 
-		if rewind {
-			err := osm.SubAreas(osmContext, params.ByName("id"))
-			if err != nil {
-				group.logger.Error(err)
-			}
-			return
-		}
-
 		err := osm.SubAreas(osmContext, params.ByName("id"))
 		if err != nil {
 			group.logger.Error(err)
