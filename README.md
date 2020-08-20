@@ -3,11 +3,11 @@
 # GeoJSON
 The missing GeoJSON utilities for OpenStreetMap
 
-![Travis (.org)](https://img.shields.io/travis/hiendv/geojson?style=flat-square)
-![Codecov](https://img.shields.io/codecov/c/github/hiendv/geojson?style=flat-square)
+[![Travis (.org)](https://img.shields.io/travis/hiendv/geojson?style=flat-square)](https://travis-ci.org/github/hiendv/geojson)
+[![Codecov](https://img.shields.io/codecov/c/github/hiendv/geojson?style=flat-square)](https://codecov.io/gh/hiendv/geojson)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/hiendv/geojson)](https://pkg.go.dev/github.com/hiendv/geojson)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hiendv/geojson)](https://goreportcard.com/report/github.com/hiendv/geojson)
-![GitHub](https://img.shields.io/github/license/hiendv/geojson?style=flat-square)
+[![GitHub](https://img.shields.io/github/license/hiendv/geojson?style=flat-square)](https://github.com/hiendv/geojson/blob/master/LICENSE)
 
 ---
 
