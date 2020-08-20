@@ -3,6 +3,7 @@ package osm
 import (
 	"context"
 	"errors"
+	"os"
 
 	"github.com/hiendv/geojson/internal/shared"
 	"github.com/paulmach/osm"
@@ -34,6 +35,10 @@ func NewContext(ctx context.Context, log shared.Logger, raw bool, separated bool
 	}
 
 	err := validateOut(out)
+	if os.IsNotExist(err) {
+		err = os.Mkdir(out, 0o700)
+	}
+
 	if err != nil {
 		return ctx, err
 	}
