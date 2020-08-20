@@ -26,6 +26,8 @@ I do not accept any responsibility or liability for the accuracy, content, compl
 
 ## Docs
 ### Installation
+**go version >= go1.13**
+
 ```
 GO111MODULE=on go get -u github.com/hiendv/geojson/cmd/geojson
 ```
