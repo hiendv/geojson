@@ -9,9 +9,13 @@ go:
   - tip
 
 before_install:
-  - go get -t -v ./...
+  - go get -v -t -d ./...
+  - GO111MODULE=on go get mvdan.cc/gofumpt
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
 
 script:
+  - gofumpt -w -s ./..
+  - golangci-lint run ./...
   - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 after_success:
